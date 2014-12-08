@@ -26,4 +26,9 @@ test:
 
 production:
   <<: *default
-  database: db/production.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  database: asterisk
+  username: display
+  password: xerxes2002
+  host: 192.168.40.241

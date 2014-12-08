@@ -9,7 +9,7 @@ class IndexController < ApplicationController
 
 		@agent_details = Hash.new
 		@current_agents.each do |a|
-			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a), :interviews => interviews(a.user), :interviews_offgrid => interviews_offgrid(a.user), :appointments_made => appointments_made }
+			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }#, :interviews => interviews(a.user), :interviews_offgrid => interviews_offgrid(a.user), :appointments_made => appointments_made }
 		end
 			
 	end
@@ -50,7 +50,7 @@ class IndexController < ApplicationController
 
 	def row_color(status)
 		color = ''
-		if status = "READY"
+		if status == "READY"
 			if @time < '00:59'
 				color = "#ADD8E6"
 			elsif @time > '01:00' and @time < '5:00'
@@ -58,7 +58,7 @@ class IndexController < ApplicationController
 			else
 				color = "#191970"
 			end
-		elsif status = "INCALL"
+		elsif status == "INCALL"
 			color = "white"
 			if @time < "00:06"
 				color = "#D8BFD8"
@@ -67,7 +67,7 @@ class IndexController < ApplicationController
 			else
 				color = "purple"
 			end
-		elsif status = "PAUSED"
+		elsif status == "PAUSED"
 			color = "#F0E68C"
 		end
 		color
