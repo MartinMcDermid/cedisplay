@@ -55,7 +55,7 @@ class IndexController < ApplicationController
 		appointment_count = 0
 		@interviews = Log.where("user = '#{user}' and date(call_date) = curdate() and status in('INTC','INTCG')")
 		@interviews.pluck(:lead_id).each do |lead|
-			if List.where(lead_id: lead).pluck(:status) == "APP"
+			if Lead.where(lead_id: lead).pluck(:status) == "APP"
 				appointment_count += 1
 			end
 		end
