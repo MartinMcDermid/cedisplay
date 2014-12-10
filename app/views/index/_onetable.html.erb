@@ -1,0 +1,18 @@
+	<table style="width: 70%;float: left;"> <!-- Single table for less than a certain amount of agents logged in. -->
+		<thead>
+		<tr>
+			<th width="50%">Name</th>
+			<th width="25%">Status</th>
+			<th width="25%">MM:SS</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% @agent_details.values.each do |details| %>
+		<tr style="background-color: <%= row_color(details[:status], details[:time]) %>;">
+			<td><b><%= details[:name] %></b></td>
+			<td><b><%= details[:status] %></b></td>
+			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
+		</tr>
+		<% end %>
+		</tbody>
+	</table>

@@ -1,0 +1,75 @@
+<div class="icon-bar four-up">
+        <a class="item">
+                <i><%= @current_agents.count %></i>
+                <label>Agents logged in</label>
+        </a>
+        <a class="item">
+                <i><%= @agents_in_calls.count %></i>
+                <label>Agents in calls</label>
+        </a>
+        <a class="item">
+                <i><%= @agents_waiting.count %></i>
+                <label>Agents waiting</label>
+        </a>
+        <a class="item">
+                <i><%= @agents_paused.count %></i>
+                <label>Agents paused</label>
+        </a>
+</div>
+<% if @current_agents.count > 10 %>
+	<table style="width: 35%;float: left;"> <!-- The next 2 tables will be in a partial that will refresh frequently -->
+		<thead>
+		<tr>
+			<th width="50%">Name</th>
+			<th width="25%">Status</th>
+			<th width="25%">MM:SS</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% @agent_details.values[1..(@current_agents.count / 2)].each do |details| %>
+		<tr style="background-color: <%= row_color(details[:status], details[:time]) %>;">
+			<td><b><%= details[:name] %></b></td>
+			<td><b><%= details[:status] %></b></td>
+			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
+		</tr>
+		<% end %>
+		</tbody>
+	</table>
+	<table style="width: 35%;float: left;">
+		<thead>
+		<tr>
+			<th width="50%">Name</th>
+			<th width="25%">Status</th>
+			<th width="25%">MM:SS</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% @agent_details.values[(@current_agents.count / 2 + 1)..(@current_agents.count)].each do |details| %>
+		<tr style="background-color: <%= row_color(details[:status], details[:time]) %>;">
+			<td><b><%= details[:name] %></b></td>
+			<td><b><%= details[:status] %></b></td>
+			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
+		</tr>
+		<% end %>
+		</tbody>
+	</table>
+<% else %>
+	<table style="width: 70%;float: left;"> <!-- Single table for less than a certain amount of agents logged in. -->
+		<thead>
+		<tr>
+			<th width="50%">Name</th>
+			<th width="25%">Status</th>
+			<th width="25%">MM:SS</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% @agent_details.values.each do |details| %>
+		<tr style="background-color: <%= row_color(details[:status], details[:time]) %>;">
+			<td><b><%= details[:name] %></b></td>
+			<td><b><%= details[:status] %></b></td>
+			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
+		</tr>
+		<% end %>
+		</tbody>
+	</table>
+<% end %>

@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   get 'index/main'
+  get 'index/status_partial'
+  get 'index/interviews_partial'
   get 'index/placeholder'
   root 'index#main'
   # The priority is based upon order of creation: first created -> highest priority.
