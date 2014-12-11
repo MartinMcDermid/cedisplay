@@ -9,10 +9,10 @@ class IndexController < ApplicationController
 		@agent_details = Hash.new
 		@current_agents.each do |a|
 			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }#, :interviews => interviews(a.user), :interviews_offgrid => interviews_offgrid(a.user), :appointments_made => appointments_made }
+		end
 		@agents_interviews = Hash.new
 		@current_agents.each do |a|
-                        @agents_interviews["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :interviews => interviews(a.user), :appointments_made => appointments_made(a.user) }
-                end
+                        @agents_interviews["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :interviews => interviews(a.user) }#, :appointments_made => appointments_made(a.user) }  
 		end
 			
 	end
@@ -34,8 +34,9 @@ class IndexController < ApplicationController
 		@current_agents = Liveagent.all
 		@agents_interviews = Hash.new
 		@current_agents.each do |a|
-			@agents_interviews["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :interviews => interviews(a.user), :appointments_made => appointments_made(a.user) }
+			@agents_interviews["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :interviews => interviews(a.user) }#, :appointments_made => appointments_made(a.user) }
 		end
+		render partial: 'interviewstable'
 	end
 
 	private
@@ -53,7 +54,6 @@ class IndexController < ApplicationController
 	
 	def appointments_made(user)
 		appointment_count = 0
-		@interviews = Log.where("user = '#{user}' and date(call_date) = curdate() and status in('INTC','INTCG')")
 		@interviews.pluck(:lead_id).each do |lead|
 			if Lead.where(lead_id: lead).pluck(:status) == "APP"
 				appointment_count += 1
