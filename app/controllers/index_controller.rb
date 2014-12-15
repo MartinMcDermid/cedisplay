@@ -1,31 +1,38 @@
 class IndexController < ApplicationController
 	helper_method :row_color, :table_half_agents
 	def main
-		@current_agents = Liveagent.all
-		@agents_in_calls = @current_agents.where(status: "INCALL")
-		@agents_waiting = @current_agents.where(status: "READY")
-		@agents_paused = @current_agents.where(status: "PAUSED")
-
+		#### First initiation of variables used in both status and interviews
+		@current_agents = Liveagent.all # Used in status and interviews
+		@agents_in_calls = @current_agents.where(status: "INCALL") # Status only
+		@agents_waiting = @current_agents.where(status: "READY") # Status only
+		@agents_paused = @current_agents.where(status: "PAUSED") # Status only
+		
+		#### Initiate variables for the partials for the first time, after that, they get initiated in their respective partial methods
+		## status partial init
 		@agent_details = Hash.new
 		@current_agents.each do |a|
-			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }#, :interviews => interviews(a.user), :interviews_offgrid => interviews_offgrid(a.user), :appointments_made => appointments_made }
+			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }
+			# the time_in_status is in seconds because it's easier to parse it when it comes to coloring
 		end
+
+		## interviews partial init
+		@interviews = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date).sort  { |a, b| b[3] <=> a[3] }
+		
 		@agents_interviews = Hash.new
-		@current_agents.each do |a|
-                        @agents_interviews["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :interviews => interviews(a.user) }#, :appointments_made => appointments_made(a.user) }  
+		@interviews.each do |a|
+			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }#, :appointments_made => appointments_made(a.user) }  
 		end
-			
 	end
 
 	def status_partial
-                @current_agents = Liveagent.all
-                @agent_details = Hash.new
+		@current_agents = Liveagent.all
+		@agent_details = Hash.new
 		@agents_in_calls = @current_agents.where(status: "INCALL")
 		@agents_waiting = @current_agents.where(status: "READY")
 		@agents_paused = @current_agents.where(status: "PAUSED")
-                @current_agents.each do |a|
-                        @agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }
-                end
+		@current_agents.each do |a|
+			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }
+		end
 		render partial: 'statustables'
 		
         end
@@ -33,8 +40,10 @@ class IndexController < ApplicationController
 	def interviews_partial
 		@current_agents = Liveagent.all
 		@agents_interviews = Hash.new
-		@current_agents.each do |a|
-			@agents_interviews["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :interviews => interviews(a.user) }#, :appointments_made => appointments_made(a.user) }
+		@interviews = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date)
+		# The below is commented to speed up the code execution. Uncomment in production to enable the interviews count
+		@interviews.each do |a|
+			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }#, :appointments_made => appointments_made(a.user) }
 		end
 		render partial: 'interviewstable'
 	end
@@ -42,14 +51,14 @@ class IndexController < ApplicationController
 	private
 
 	def interviews(user)
-		@interviews = Log.where("user = '#{user}' and date(call_date) = curdate() and status in('INTC','INTCG')")
-		@interviews.count
-		
-	end
-
-	def interviews_offgrid(user)
-		@interviews_offgrid = Log.where("user = '#{user}' and date(call_date) = curdate() and status = 'INTCG'")
-		@interviews_offgrid.count
+		completed = 0
+		@interviews.each do |lead|
+			# The lead is an array of 2 elements : a lead_id, :user, and :status
+			if lead[1] == user
+				completed += 1
+			end
+		end
+		completed
 	end  
 	
 	def appointments_made(user)

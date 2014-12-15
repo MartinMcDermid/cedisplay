@@ -1,4 +1,4 @@
-<table style="width: 30%;float: right;">
+<table style="width: 30%; float: right;">
 	<thead> 
 	<tr>    
 		<th width="75%">Name</th>
@@ -14,3 +14,7 @@
 	<% end %>
 	</tbody>
 </table>
+
+<div class="panel callout radius" style="height: 10%;width: 100%;bottom: 0px;position: absolute;background-color: #FFD1D1;border-color: red;">
+	<font size="38">Latest appointment made by : <%= User.where(user: @interviews.first[1]).pluck(:full_name).first %> at <%= %></font>
+</div>

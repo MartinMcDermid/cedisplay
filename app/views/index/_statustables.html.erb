@@ -1,28 +1,28 @@
 <div class="icon-bar four-up">
-        <a class="item">
-                <i><%= @current_agents.count %></i>
-                <label>Agents logged in</label>
-        </a>
-        <a class="item">
-                <i><%= @agents_in_calls.count %></i>
-                <label>Agents in calls</label>
-        </a>
-        <a class="item">
-                <i><%= @agents_waiting.count %></i>
-                <label>Agents waiting</label>
-        </a>
-        <a class="item">
-                <i><%= @agents_paused.count %></i>
-                <label>Agents paused</label>
-        </a>
+	<a class="item">
+		<i><%= @current_agents.count %></i>
+		<label>Agents logged in</label>
+	</a>
+	<a class="item">
+		<i><%= @agents_in_calls.count %></i>
+		<label>Agents in calls</label>
+	</a>
+	<a class="item">
+		<i><%= @agents_waiting.count %></i>
+		<label>Agents waiting</label>
+	</a>
+	<a class="item">
+		<i><%= @agents_paused.count %></i>
+		<label>Agents paused</label>
+	</a>
 </div>
-<% if @current_agents.count > 10 %>
-	<table style="width: 35%;float: left;"> <!-- The next 2 tables will be in a partial that will refresh frequently -->
+<% if @current_agents.count > 15 %>
+	<table style="width: 35%;float: left;">
 		<thead>
 		<tr>
-			<th width="50%">Name</th>
+			<th width="60%">Name</th>
 			<th width="25%">Status</th>
-			<th width="25%">MM:SS</th>
+			<th width="15%">MM:SS</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -38,9 +38,9 @@
 	<table style="width: 35%;float: left;">
 		<thead>
 		<tr>
-			<th width="50%">Name</th>
+			<th width="60%">Name</th>
 			<th width="25%">Status</th>
-			<th width="25%">MM:SS</th>
+			<th width="15%">MM:SS</th>
 		</tr>
 		</thead>
 		<tbody>
