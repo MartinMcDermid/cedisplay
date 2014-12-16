@@ -1,5 +1,5 @@
 class IndexController < ApplicationController
-	helper_method :row_color, :table_half_agents
+	helper_method :row_color, :table_half_agents, :latest_interview_color
 	def main
 		#### First initiation of variables used in both status and interviews
 		@current_agents = Liveagent.all # Used in status and interviews
@@ -16,12 +16,12 @@ class IndexController < ApplicationController
 		end
 
 		## interviews partial init
-		@interviews = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date).sort  { |a, b| b[3] <=> a[3] }
-		
+		@interviews = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date).sort { |a,b| b[3] <=> a[3] }
 		@agents_interviews = Hash.new
 		@interviews.each do |a|
 			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }#, :appointments_made => appointments_made(a.user) }  
 		end
+		@timediff = TimeDifference.between(@interviews.first[3], Time.now).in_seconds.to_i
 	end
 
 	def status_partial
@@ -33,19 +33,19 @@ class IndexController < ApplicationController
 		@current_agents.each do |a|
 			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }
 		end
-		render partial: 'statustables'
-		
-        end
+		render partial: 'statustables'	
+	end
 
 	def interviews_partial
 		@current_agents = Liveagent.all
 		@agents_interviews = Hash.new
-		@interviews = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date)
+		@interviews = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date).sort {|a,b| b[3] <=> a[3]}
 		# The below is commented to speed up the code execution. Uncomment in production to enable the interviews count
 		@interviews.each do |a|
 			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }#, :appointments_made => appointments_made(a.user) }
 		end
 		render partial: 'interviewstable'
+		@timediff = TimeDifference.between(@interviews.first[3], Time.now).in_seconds.to_i
 	end
 
 	private
@@ -110,5 +110,13 @@ class IndexController < ApplicationController
 			color = "white"
 		end
 		color
+	end
+
+	def latest_interview_color(time_difference)
+		if time_difference < 60
+			div_color = "background-color: #E0FFE0;border-color: green;"
+		else
+			div_color = ""
+		end
 	end
 end
