@@ -16,12 +16,14 @@ class IndexController < ApplicationController
 		end
 
 		## interviews partial init
-		@interviews = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date).sort { |a,b| b[3] <=> a[3] }
+		@interviews = interviews_in_shift(Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date)).sort { |a,b| b[3] <=> a[3] }
 		@agents_interviews = Hash.new
 		@interviews.each do |a|
 			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }#, :appointments_made => appointments_made(a.user) }  
 		end
-		@timediff = TimeDifference.between(@interviews.first[3], Time.now).in_seconds.to_i
+		if !@interviews.blank?
+			@timediff = TimeDifference.between(@interviews.first[3], Time.now).in_seconds.to_i
+		end
 	end
 
 	def status_partial
@@ -39,13 +41,15 @@ class IndexController < ApplicationController
 	def interviews_partial
 		@current_agents = Liveagent.all
 		@agents_interviews = Hash.new
-		@interviews = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date).sort {|a,b| b[3] <=> a[3]}
+		@interviews = interviews_in_shift(Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date)).sort {|a,b| b[3] <=> a[3]}
 		# The below is commented to speed up the code execution. Uncomment in production to enable the interviews count
 		@interviews.each do |a|
 			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }#, :appointments_made => appointments_made(a.user) }
 		end
 		render partial: 'interviewstable'
-		@timediff = TimeDifference.between(@interviews.first[3], Time.now).in_seconds.to_i
+		if !@interviews.blank?
+			@timediff = TimeDifference.between(@interviews.first[3], Time.now).in_seconds.to_i
+		end
 	end
 
 	private
@@ -113,10 +117,38 @@ class IndexController < ApplicationController
 	end
 
 	def latest_interview_color(time_difference)
-		if time_difference < 60
-			div_color = "background-color: #E0FFE0;border-color: green;"
-		else
-			div_color = ""
+		if time_difference
+			if time_difference < 60
+				div_color = "background-color: #E0FFE0;border-color: green;"
+			else
+				div_color = ""
+			end
 		end
+	end
+
+	def interviews_in_shift(array)
+		time_at_12_30 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 12, 30)
+		time_at_13_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 13)
+		time_at_16_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 16)
+		time_at_17_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 17)
+		time_at_20_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 20)
+		if Time.now.wday.between?(1, 4) # monday to thursday
+			if Time.now < time_at_13_00
+				array
+			elsif Time.now > time_at_13_00 and Time.now < time_at_17_00
+				array.select{ |leadid, user, status, calldate| calldate > time_at_12_30 }
+			elsif Time.now > time_at_17_00
+				array = array.select{ |leadid, user, status, calldate| calldate > time_at_16_00 }
+			end
+		elsif Time.now.wday == 5 # friday
+			if Time.now < time_at_12_30
+				array
+			elsif Time.now > time_at_12_30 and Time.now < time_at_16_00
+				array = array.select{ |leadid, user, status, calldate| calldate > time_at_12_30 }
+			elsif
+				array = array.select{ |leadid, user, status, calldate| calldate > time_at_16_00 }
+			end
+		end
+		array
 	end
 end

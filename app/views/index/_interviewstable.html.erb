@@ -19,6 +19,6 @@
 	<% if @interviews.count == 0 %>
 	<font size="38">No interviews completed today, yet...</font>
 	<% else %>
-	<font size="38">Latest interview completed by : <%= User.where(user: @interviews.first).pluck(:full_name).first %> at <%= @interviews.first[3].strftime("%T")%></font>
+	<font size="38">Latest interview completed by : <%= User.where(user: @interviews.first[1]).pluck(:full_name).first %> at <%= @interviews.first[3].strftime("%T")%></font>
 	<% end %>
 </div>
