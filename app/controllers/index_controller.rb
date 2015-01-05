@@ -8,6 +8,7 @@ class IndexController < ApplicationController
 		@agents_paused = @current_agents.where(status: "PAUSED") # Status only
 		
 		#### Initiate variables for the partials for the first time, after that, they get initiated in their respective partial methods
+		
 		## status partial init
 		@agent_details = Hash.new
 		@current_agents.each do |a|
@@ -26,6 +27,7 @@ class IndexController < ApplicationController
 		end
 	end
 
+	### This method is called by the javascript (status_partial.js) which refreshes the status tables in the main view
 	def status_partial
 		@current_agents = Liveagent.all
 		@agent_details = Hash.new
@@ -38,13 +40,14 @@ class IndexController < ApplicationController
 		render partial: 'statustables'	
 	end
 
+	### This method is called by the javascript (status_partial.js) which refreshes the status tables in the main view
 	def interviews_partial
 		@current_agents = Liveagent.all
 		@agents_interviews = Hash.new
 		@interviews = interviews_in_shift(Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date)).sort {|a,b| b[3] <=> a[3]}
-		# The below is commented to speed up the code execution. Uncomment in production to enable the interviews count
+		
 		@interviews.each do |a|
-			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }#, :appointments_made => appointments_made(a.user) }
+			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }
 		end
 		render partial: 'interviewstable'
 		if !@interviews.blank?
@@ -53,7 +56,7 @@ class IndexController < ApplicationController
 	end
 
 	private
-
+	
 	def interviews(user)
 		completed = 0
 		@interviews.each do |lead|
