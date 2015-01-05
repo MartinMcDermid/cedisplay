@@ -135,6 +135,7 @@ class IndexController < ApplicationController
 		time_at_16_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 16)
 		time_at_17_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 17)
 		time_at_20_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 20)
+=begin
 		if Time.now.wday.between?(1, 4) # monday to thursday
 			if Time.now < time_at_13_00
 				array
@@ -145,12 +146,19 @@ class IndexController < ApplicationController
 			end
 		elsif Time.now.wday == 5 # friday
 			if Time.now < time_at_12_30
-				array
 			elsif Time.now > time_at_12_30 and Time.now < time_at_16_00
 				array = array.select{ |leadid, user, status, calldate| calldate > time_at_12_30 }
 			elsif
 				array = array.select{ |leadid, user, status, calldate| calldate > time_at_16_00 }
 			end
+		end
+=end
+		if Time.now < time_at_13_00
+			#do nothing, full array returned
+		elsif Time.now > time_at_13_00 and Time.now < time_at_17_00
+			array = array.select{ |leadid, user, status, calldate| calldate > time_at_13_00 }
+		elsif Time.now > time_at_17_00
+			array = array.select{ |leadid, user, status, calldate| calldate > time_at_17_00 }
 		end
 		array
 	end
