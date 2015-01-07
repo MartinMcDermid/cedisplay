@@ -18,6 +18,7 @@ class IndexController < ApplicationController
 
 		## interviews partial init
 		@interviews = interviews_in_shift(Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date)).sort { |a,b| b[3] <=> a[3] }
+		@interviews_total = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").count
 		@agents_interviews = Hash.new
 		@interviews.each do |a|
 			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }#, :appointments_made => appointments_made(a.user) }  
@@ -45,6 +46,7 @@ class IndexController < ApplicationController
 		@current_agents = Liveagent.all
 		@agents_interviews = Hash.new
 		@interviews = interviews_in_shift(Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date)).sort {|a,b| b[3] <=> a[3]}
+		@interviews_total = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").count
 		
 		@interviews.each do |a|
 			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }
