@@ -1,7 +1,12 @@
 class IndexController < ApplicationController
 	helper_method :row_color, :table_half_agents, :latest_interview_color
+
 	def main
 		#### First initiation of variables used in both status and interviews
+		## This part defines whether top bar shows agent details or call details
+		@@top_bar_counter = 1
+		@top_bar_type = 'agents'
+
 		@current_agents = Liveagent.all # Used in status and interviews
 		@agents_in_calls = @current_agents.where(status: "INCALL") # Status only
 		@agents_waiting = @current_agents.where(status: "READY") # Status only
@@ -30,6 +35,17 @@ class IndexController < ApplicationController
 
 	### This method is called by the javascript (status_partial.js) which refreshes the status tables in the main view
 	def status_partial
+		if @@top_bar_counter < 6
+			@@top_bar_counter += 1
+			@top_bar_type = 'agents'
+		elsif @@top_bar_counter > 5 and @@top_bar_counter < 11
+			@top_bar_type = 'calls'
+			@@top_bar_counter += 1
+		else
+			@@top_bar_counter = 1
+			@top_bar_type = 'agents'
+		end
+
 		@current_agents = Liveagent.all
 		@agent_details = Hash.new
 		@agents_in_calls = @current_agents.where(status: "INCALL")

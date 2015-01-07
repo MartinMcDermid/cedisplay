@@ -1,21 +1,42 @@
-<div class="icon-bar four-up">
-	<a class="item">
-		<i><%= @current_agents.count %></i>
-		<label>Agents logged in</label>
-	</a>
-	<a class="item">
-		<i><%= @agents_in_calls.count %></i>
-		<label>Agents in calls</label>
-	</a>
-	<a class="item">
-		<i><%= @agents_waiting.count %></i>
-		<label>Agents waiting</label>
-	</a>
-	<a class="item">
-		<i><%= @agents_paused.count %></i>
-		<label>Agents paused</label>
-	</a>
-</div>
+<% if @top_bar_type == 'agents' %>
+	<div class="icon-bar four-up" style="background-color: #005B7F">
+		<a class="item">
+			<i><%= @current_agents.count %></i>
+			<label>Agents logged in</label>
+		</a>
+		<a class="item">
+			<i><%= @agents_in_calls.count %></i>
+			<label>Agents in calls</label>
+		</a>
+		<a class="item">
+			<i><%= @agents_waiting.count %></i>
+			<label>Agents waiting</label>
+		</a>
+		<a class="item">
+			<i><%= @agents_paused.count %></i>
+			<label>Agents paused</label>
+		</a>
+	</div>
+<% elsif @top_bar_type == 'calls' %>
+	<div class="icon-bar four-up" style="background-color: #406618">
+		<a class="item">
+			<i><%= @current_agents.count %></i>
+			<label>Calls being placed</label>
+		</a>
+		<a class="item">
+			<i><%= @agents_in_calls.count %></i>
+			<label>Calls ringing</label>
+		</a>
+		<a class="item">
+			<i><%= @agents_waiting.count %></i>
+			<label>Calls waiting for agents</label>
+		</a>
+		<a class="item">
+			<i><%= @agents_paused.count %></i>
+			<label></label>
+		</a>
+	</div>
+<% end %>
 <% if @current_agents.count > 15 %>
 	<table style="width: 35%;float: left;">
 		<thead>

@@ -13,9 +13,9 @@ development:
   adapter: mysql2
   encoding: utf8
   database: asterisk
-  username: display
+  username: root
   password: xerxes2002
-  host: 192.168.40.241
+  host: localhost
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
