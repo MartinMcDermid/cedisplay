@@ -159,8 +159,10 @@ class IndexController < ApplicationController
 
 	def interviews_in_shift(array)
 		time_at_12_30 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 12, 30)
+		time_at_12_50 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 12, 50)
 		time_at_13_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 13)
 		time_at_16_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 16)
+		time_at_16_50 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 16, 50)
 		time_at_17_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 17)
 		time_at_20_00 = Time.gm(Date.today.year, Date.today.month, Date.today.day, 20)
 =begin
@@ -181,11 +183,11 @@ class IndexController < ApplicationController
 			end
 		end
 =end
-		if Time.now < time_at_13_00
+		if Time.now < time_at_12_50
 			#do nothing, full array returned
-		elsif Time.now > time_at_13_00 and Time.now < time_at_17_00
+		elsif Time.now > time_at_12_50 and Time.now < time_at_16_50
 			array = array.select{ |leadid, user, status, calldate| calldate > time_at_13_00 }
-		elsif Time.now > time_at_17_00
+		elsif Time.now > time_at_16_50
 			array = array.select{ |leadid, user, status, calldate| calldate > time_at_17_00 }
 		end
 		array
