@@ -18,22 +18,22 @@
 		</a>
 	</div>
 <% elsif @top_bar_type == 'calls' %>
-	<div class="icon-bar four-up" style="background-color: #406618">
+	<div class="icon-bar four-up" style="background-color: #790000">
 		<a class="item">
-			<i><%= @current_agents.count %></i>
+			<i><%= @calls_being_placed.count %></i>
 			<label>Calls being placed</label>
 		</a>
 		<a class="item">
-			<i><%= @agents_in_calls.count %></i>
+			<i><%= @calls_ringing.count %></i>
 			<label>Calls ringing</label>
 		</a>
 		<a class="item">
-			<i><%= @agents_waiting.count %></i>
+			<i><%= @calls_waiting_for_agents.count %></i>
 			<label>Calls waiting for agents</label>
 		</a>
 		<a class="item">
-			<i><%= @agents_paused.count %></i>
-			<label></label>
+			<i><%= @calls_in_IVR.count %></i>
+			<label>Calls in IVR</label>
 		</a>
 	</div>
 <% end %>
@@ -41,9 +41,9 @@
 	<table style="width: 35%;float: left;">
 		<thead>
 		<tr>
-			<th width="60%">Name</th>
-			<th width="25%">Status</th>
-			<th width="15%">MM:SS</th>
+			<th width="60%" style="font-size: 45px">Name</th>
+			<th width="25%" style="font-size: 45px">Status</th>
+			<th width="15%" style="font-size: 45px">MM:SS</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -59,9 +59,9 @@
 	<table style="width: 35%;float: left;">
 		<thead>
 		<tr>
-			<th width="60%">Name</th>
-			<th width="25%">Status</th>
-			<th width="15%">MM:SS</th>
+			<th width="60%" style="font-size: 45px">Name</th>
+			<th width="25%" style="font-size: 45px">Status</th>
+			<th width="15%" style="font-size: 45px">MM:SS</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -78,9 +78,9 @@
 	<table style="width: 70%;float: left;"> <!-- Single table for less than a certain amount of agents logged in. -->
 		<thead>
 		<tr>
-			<th width="50%">Name</th>
-			<th width="25%">Status</th>
-			<th width="25%">MM:SS</th>
+			<th width="50%" style="font-size: 45px">Name</th>
+			<th width="25%" style="font-size: 45px">Status</th>
+			<th width="25%" style="font-size: 45px">MM:SS</th>
 		</tr>
 		</thead>
 		<tbody>

@@ -7,6 +7,11 @@ class IndexController < ApplicationController
 		session[:top_bar_counter] = 1
 		@top_bar_type = 'agents'
 
+		@calls_being_placed = Autocall.where.not(status: 'XFER')
+		@calls_ringing = Autocall.where(status: 'SENT')
+		@calls_waiting_for_agents = Autocall.where(status: 'LIVE')
+		@calls_in_IVR = Autocall.where(status: 'IVR')
+
 		@current_agents = Liveagent.all # Used in status and interviews
 		@agents_in_calls = @current_agents.where(status: "INCALL") # Status only
 		@agents_waiting = @current_agents.where(status: "READY") # Status only
@@ -35,16 +40,21 @@ class IndexController < ApplicationController
 
 	### This method is called by the javascript (status_partial.js) which refreshes the status tables in the main view
 	def status_partial
-		if session[:top_bar_counter] < 6
+		if session[:top_bar_counter] < 4
 			session[:top_bar_counter] += 1
 			@top_bar_type = 'agents'
-		elsif session[:top_bar_counter] > 5 and session[:top_bar_counter] < 11
+		elsif session[:top_bar_counter] > 3 and session[:top_bar_counter] < 7
 			@top_bar_type = 'calls'
 			session[:top_bar_counter] += 1
 		else
 			session[:top_bar_counter] = 1
 			@top_bar_type = 'agents'
 		end
+
+		@calls_being_placed = Autocall.where.not(status: 'XFER')
+		@calls_ringing = Autocall.where(status: 'SENT')
+		@calls_waiting_for_agents = Autocall.where(status: 'LIVE')
+		@calls_in_IVR = Autocall.where(status: 'IVR')
 
 		@current_agents = Liveagent.all
 		@agent_details = Hash.new

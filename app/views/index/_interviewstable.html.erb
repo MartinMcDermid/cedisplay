@@ -1,8 +1,8 @@
 <table style="width: 30%; float: right;">
 	<thead> 
 	<tr>    
-		<th width="75%">Name</th>
-		<th width="25%">Interviews</th>
+		<th width="75%" style="font-size: 45px">Name</th>
+		<th width="25%" style="font-size: 45px">Interviews</th>
 	</tr>   
 	</thead>
 	<tbody>
@@ -12,11 +12,15 @@
 			<td><%= v[:interviews] %></td>
 		</tr>
 	<% end %>
-		<tr>
+		<tr style="background-color: #A2D39C">
 			<td>TOTAL (Shift)</td>
 			<td><%= @interviews.count %></td>
 		</tr>
-		<tr>
+		<tr style="background-color: white">
+			<td>&nbsp;</td>
+			<td></td>
+		</tr>
+		<tr style="background-color: #A2D39C">
 			<td>TOTAL (Day)</td>
 			<td><%= @interviews_total %></td>
 		</tr>
