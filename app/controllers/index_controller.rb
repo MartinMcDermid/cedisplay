@@ -1,5 +1,5 @@
 class IndexController < ApplicationController
-	helper_method :row_color, :table_half_agents, :latest_interview_color
+	helper_method :row_color, :table_half_agents, :latest_interview_color, :agent_status
 
 	def main
 		#### First initiation of variables used in both status and interviews
@@ -22,7 +22,7 @@ class IndexController < ApplicationController
 		## status partial init
 		@agent_details = Hash.new
 		@current_agents.each do |a|
-			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }
+			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a), :lead_id => a.lead_id }
 			# the time_in_status is in seconds because it's easier to parse it when it comes to coloring
 		end
 
@@ -62,7 +62,7 @@ class IndexController < ApplicationController
 		@agents_waiting = @current_agents.where(status: "READY")
 		@agents_paused = @current_agents.where(status: "PAUSED")
 		@current_agents.each do |a|
-			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a) }
+			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a), :lead_id => a.lead_id }
 		end
 		render partial: 'statustables'	
 	end
@@ -191,5 +191,14 @@ class IndexController < ApplicationController
 			array = array.select{ |leadid, user, status, calldate| calldate > time_at_17_00 }
 		end
 		array
+	end
+
+	def agent_status(status, lead_id)
+		if status == 'PAUSED' && lead_id != 0
+			real_status = 'DISPO'
+		else
+			real_status = status
+		end
+		real_status
 	end
 end

@@ -50,7 +50,7 @@
 		<% @agent_details.values[1..(@current_agents.count / 2)].each do |details| %>
 		<tr style="background-color: <%= row_color(details[:status], details[:time]) %>;">
 			<td><b><%= details[:name] %></b></td>
-			<td><b><%= details[:status] %></b></td>
+			<td><b><%= agent_status(details[:status], details[:lead_id]) %></b></td>
 			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
 		</tr>
 		<% end %>
@@ -68,7 +68,7 @@
 		<% @agent_details.values[(@current_agents.count / 2 + 1)..(@current_agents.count)].each do |details| %>
 		<tr style="background-color: <%= row_color(details[:status], details[:time]) %>;">
 			<td><b><%= details[:name] %></b></td>
-			<td><b><%= details[:status] %></b></td>
+			<td><b><%= agent_status(details[:status], details[:lead_id]) %></b></td>
 			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
 		</tr>
 		<% end %>
@@ -87,7 +87,7 @@
 		<% @agent_details.values.each do |details| %>
 		<tr style="background-color: <%= row_color(details[:status], details[:time]) %>;">
 			<td><b><%= details[:name] %></b></td>
-			<td><b><%= details[:status] %></b></td>
+			<td><b><%= agent_status(details[:status], details[:lead_id]) %></b></td>
 			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
 		</tr>
 		<% end %>
