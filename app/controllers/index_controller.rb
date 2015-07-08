@@ -4,25 +4,15 @@ class IndexController < ApplicationController
 	def main
 		#### First initiation of variables used in both status and interviews
 		## This part defines whether top bar shows agent details or call details
-		session[:top_bar_counter] = 1
-		@top_bar_type = 'agents'
-
-		@calls_being_placed = Autocall.where.not(status: 'XFER')
-		@calls_ringing = Autocall.where(status: 'SENT')
-		@calls_waiting_for_agents = Autocall.where(status: 'LIVE')
-		@calls_in_IVR = Autocall.where(status: 'IVR')
 
 		@current_agents = Liveagent.all # Used in status and interviews
-		@agents_in_calls = @current_agents.where(status: "INCALL") # Status only
-		@agents_waiting = @current_agents.where(status: "READY") # Status only
-		@agents_paused = @current_agents.where(status: "PAUSED") # Status only
-		
+
 		#### Initiate variables for the partials for the first time, after that, they get initiated in their respective partial methods
 		
 		## status partial init
 		@agent_details = Hash.new
 		@current_agents.each do |a|
-			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a), :lead_id => a.lead_id }
+			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a), :lead_id => a.lead_id, :speaks =>  }
 			# the time_in_status is in seconds because it's easier to parse it when it comes to coloring
 		end
 
@@ -42,45 +32,19 @@ class IndexController < ApplicationController
 	def status_partial
 		if session[:top_bar_counter] < 4
 			session[:top_bar_counter] += 1
-			@top_bar_type = 'agents'
 		elsif session[:top_bar_counter] > 3 and session[:top_bar_counter] < 7
-			@top_bar_type = 'calls'
 			session[:top_bar_counter] += 1
 		else
 			session[:top_bar_counter] = 1
-			@top_bar_type = 'agents'
 		end
 
-		@calls_being_placed = Autocall.where.not(status: 'XFER')
-		@calls_ringing = Autocall.where(status: 'SENT')
-		@calls_waiting_for_agents = Autocall.where(status: 'LIVE')
-		@calls_in_IVR = Autocall.where(status: 'IVR')
 
 		@current_agents = Liveagent.all
 		@agent_details = Hash.new
-		@agents_in_calls = @current_agents.where(status: "INCALL")
-		@agents_waiting = @current_agents.where(status: "READY")
-		@agents_paused = @current_agents.where(status: "PAUSED")
 		@current_agents.each do |a|
 			@agent_details["#{a.user}"] = { :name => User.where(user: a.user).pluck(:full_name).first, :status => a.status, :time => time_in_status(a), :lead_id => a.lead_id }
 		end
 		render partial: 'statustables'	
-	end
-
-	### This method is called by the javascript (status_partial.js) which refreshes the status tables in the main view
-	def interviews_partial
-		@current_agents = Liveagent.all
-		@agents_interviews = Hash.new
-		@interviews = interviews_in_shift(Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").pluck(:lead_id, :user, :status, :call_date)).sort {|a,b| b[3] <=> a[3]}
-		@interviews_total = Log.where("date(call_date) = curdate() and status in('INTC','INTCG')").count
-		
-		@interviews.each do |a|
-			@agents_interviews["#{a[1]}"] = { :name => User.where(user: a[1]).pluck(:full_name).first, :interviews => interviews(a[1]) }
-		end
-		render partial: 'interviewstable'
-		if !@interviews.blank?
-			@timediff = TimeDifference.between(@interviews.first[3], Time.now).in_seconds.to_i
-		end
 	end
 
 	private

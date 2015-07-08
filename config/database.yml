@@ -31,4 +31,4 @@ production:
   database: asterisk
   username: display
   password: xerxes2002
-  host: 192.168.40.241
+  host: 192.168.85.11

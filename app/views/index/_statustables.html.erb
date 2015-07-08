@@ -1,49 +1,11 @@
-<% if @top_bar_type == 'agents' %>
-	<div class="icon-bar four-up" style="background-color: #005B7F">
-		<a class="item">
-			<i><%= @current_agents.count %></i>
-			<label>Agents logged in</label>
-		</a>
-		<a class="item">
-			<i><%= @agents_in_calls.count %></i>
-			<label>Agents in calls</label>
-		</a>
-		<a class="item">
-			<i><%= @agents_waiting.count %></i>
-			<label>Agents waiting</label>
-		</a>
-		<a class="item">
-			<i><%= @agents_paused.count %></i>
-			<label>Agents paused</label>
-		</a>
-	</div>
-<% elsif @top_bar_type == 'calls' %>
-	<div class="icon-bar four-up" style="background-color: #790000">
-		<a class="item">
-			<i><%= @calls_being_placed.count %></i>
-			<label>Calls being placed</label>
-		</a>
-		<a class="item">
-			<i><%= @calls_ringing.count %></i>
-			<label>Calls ringing</label>
-		</a>
-		<a class="item">
-			<i><%= @calls_waiting_for_agents.count %></i>
-			<label>Calls waiting for agents</label>
-		</a>
-		<a class="item">
-			<i><%= @calls_in_IVR.count %></i>
-			<label>Calls in IVR</label>
-		</a>
-	</div>
-<% end %>
 <% if @current_agents.count > 15 %>
 	<table style="width: 35%;float: left;">
 		<thead>
 		<tr>
 			<th width="60%" style="font-size: 45px">Name</th>
-			<th width="25%" style="font-size: 45px">Status</th>
-			<th width="15%" style="font-size: 45px">MM:SS</th>
+			<th width="20%" style="font-size: 45px">Status</th>
+			<th width="10%" style="font-size: 45px">MM:SS</th>
+			<th width="10%" style="font-size: 45px">Speaks</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -52,6 +14,7 @@
 			<td><b><%= details[:name] %></b></td>
 			<td><b><%= agent_status(details[:status], details[:lead_id]) %></b></td>
 			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
+			<td><b><%= details[:speaks] %></b></td>
 		</tr>
 		<% end %>
 		</tbody>
@@ -60,8 +23,9 @@
 		<thead>
 		<tr>
 			<th width="60%" style="font-size: 45px">Name</th>
-			<th width="25%" style="font-size: 45px">Status</th>
-			<th width="15%" style="font-size: 45px">MM:SS</th>
+			<th width="20%" style="font-size: 45px">Status</th>
+			<th width="10%" style="font-size: 45px">MM:SS</th>
+			<th width="10%" style="font-size: 45px">Speaks</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -70,6 +34,7 @@
 			<td><b><%= details[:name] %></b></td>
 			<td><b><%= agent_status(details[:status], details[:lead_id]) %></b></td>
 			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
+			<td><b><%= details[:speaks] %></b></td>
 		</tr>
 		<% end %>
 		</tbody>
@@ -79,8 +44,9 @@
 		<thead>
 		<tr>
 			<th width="50%" style="font-size: 45px">Name</th>
-			<th width="25%" style="font-size: 45px">Status</th>
-			<th width="25%" style="font-size: 45px">MM:SS</th>
+			<th width="20%" style="font-size: 45px">Status</th>
+			<th width="20%" style="font-size: 45px">MM:SS</th>
+			<th width="10%" style="font-size: 45px">Speaks</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -89,6 +55,7 @@
 			<td><b><%= details[:name] %></b></td>
 			<td><b><%= agent_status(details[:status], details[:lead_id]) %></b></td>
 			<td><b><%= Time.at(details[:time]).gmtime.strftime('%M:%S') %></b></td>
+			<td><b><%= details[:speaks] %></b></td>
 		</tr>
 		<% end %>
 		</tbody>
